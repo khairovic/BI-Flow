@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BIFlow</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+/* Layout: one 16:9 notebook-paper stage, letterboxed on black, slides paged with keys, dots, swipe */
+:root{--bg:#FBF7EC;--ink:#2E2B3A;--mute:#6E6859;--card:#FFFEFA;--teal:#9ED8C6;--amber:#FBE08A;--coral:#F6B4AC;--blue:#A9C7EC;--lav:#D3C8F2;--line:#D8CCAE;--tealD:#2F8A75;--amberD:#B7821A;--coralD:#C4513F;--blueD:#3F6CA8;--lavD:#6A55B0;--black:#000;
+--display:Caveat,"Segoe Print",cursive;--body:"Patrick Hand","Comic Sans MS",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--black);overflow:hidden;font-family:var(--body)}
+#stage{position:absolute;inset:0;margin:auto;width:min(100vw,177.78vh);aspect-ratio:16/9;max-width:100%;container-type:size;background:linear-gradient(rgba(120,160,200,.16) 1px,transparent 1px) 0 0/100% 3.2cqh,url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence baseFrequency=%27.8%27 numOctaves=%272%27/%3E%3CfeColorMatrix values=%270 0 0 0 .5 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .09 0%27/%3E%3C/filter%3E%3Crect width=%27200%27 height=%27200%27 filter=%27url(%23n)%27/%3E%3C/svg%3E"),var(--bg);color:var(--ink);overflow:hidden;box-shadow:inset 0 0 6cqw rgba(150,120,60,.18)}
+#stage::before{content:"";position:absolute;left:3.2cqw;top:0;bottom:0;border-left:2px solid rgba(228,110,100,.35)}
+.slide{position:absolute;inset:0;padding:4.2cqw 5cqw 5.4cqw;display:none;flex-direction:column;gap:2cqh}
+.slide.on{display:flex}
+h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradient(transparent 62%,var(--amber) 62% 92%,transparent 92%);padding:0 .6cqw;text-wrap:balance}
+.sub{color:var(--mute);font-size:1.5cqw;margin-top:.5cqh;padding-left:.6cqw}
+.stage-tag{float:right;font:700 2cqw var(--display);color:var(--tealD);border:2px solid var(--tealD);border-radius:1cqw .4cqw 1cqw .4cqw;padding:.2cqh 1cqw;transform:rotate(2deg);background:var(--card)}
+.row{display:flex;gap:1.4cqw}.col{display:flex;flex-direction:column;gap:1.2cqh}.g1{flex:1;min-width:0}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:.4cqw;padding:1.5cqw 1.3cqw 1.3cqw;box-shadow:.15cqw .35cqw .8cqw rgba(90,70,30,.16),0 0 0 .1cqw rgba(255,255,255,.6) inset;transform:rotate(-.35deg)}
+.card:nth-child(even){transform:rotate(.4deg)}
+.card::before{content:"";position:absolute;top:-1.1cqh;left:50%;width:5cqw;height:2.2cqh;margin-left:-2.5cqw;background:rgba(251,224,138,.8);transform:rotate(-2deg);box-shadow:0 .1cqw .3cqw rgba(0,0,0,.12)}
+.card:nth-child(3n)::before{background:rgba(169,199,236,.75);transform:rotate(2.5deg)}
+.card.notape::before{display:none}
+.flat{transform:none!important}
+.chip{display:inline-block;padding:.4cqh 1cqw;border-radius:.5cqw 1cqw .6cqw 1cqw;font-size:1.4cqw;background:var(--card);border:1.5px solid var(--ink);color:var(--ink)}
+.t{background:var(--teal)}.a{background:var(--amber)}.c{background:var(--coral)}.b{background:var(--blue)}.k{background:var(--lav)}
+.big{font:700 3.6cqw var(--display)}
+.i{width:1.5cqw;height:1.5cqw;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.25cqw}
+.ib{width:5.6cqw;height:5.6cqw;flex:none;border-radius:52% 48% 55% 45%;display:grid;place-items:center;border:2px solid var(--ink);background:var(--card);box-shadow:.15cqw .2cqw 0 var(--ink)}
+.ib .i{width:58%;height:58%;vertical-align:0}
+.ib.sm{width:3.6cqw;height:3.6cqw}
+.ib.xs{width:2.8cqw;height:2.8cqw}
+.h{font:700 2.4cqw var(--display)}
+.s{font-size:1.4cqw;color:var(--mute)}
+.arrow{align-self:center;font-size:2.2cqw;color:var(--mute)}
+.ctr{text-align:center;align-items:center}
+.nav{position:absolute;bottom:1.4cqh;left:5cqw;right:5cqw;display:flex;align-items:center;justify-content:space-between;font-size:1.1cqw;color:var(--mute)}
+.dots{display:flex;gap:.6cqw}.dots i{width:1.6cqw;height:.7cqh;border-radius:1cqw;background:var(--line);cursor:pointer}.dots i.on{background:var(--tealD)}
+.nav button{background:var(--card);border:1.5px solid var(--ink);color:var(--ink);border-radius:1cqw;padding:.4cqh 1.2cqw;cursor:pointer;font:inherit;font-size:1.1cqw}
+.nav button:focus-visible,.dots i:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--amberD);outline-offset:2px}
+.grid{display:grid;gap:1.2cqw}
+.bar{border-radius:.5cqw;padding:1.1cqh 1.4cqw;font-size:1.7cqw;text-align:center;border:2px solid var(--ink);box-shadow:.2cqw .3cqw 0 rgba(46,43,58,.25)}
+.node{flex:1;text-align:center;padding:1.6cqh .6cqw;border-radius:.5cqw;font-size:1.5cqw;background:var(--card);border:2px solid var(--ink);box-shadow:.2cqw .3cqw 0 var(--teal);min-width:0}
+.node .ib{margin:0 auto 1cqh}
+.scr{display:block;height:1.1cqh;border-radius:1cqh;background:var(--line)}
+.bub{border:2px solid var(--ink);border-radius:1.4cqw 1.4cqw 1.4cqw .3cqw;padding:1.4cqh 1.2cqw;background:var(--card);box-shadow:.2cqw .3cqw 0 rgba(46,43,58,.2)}
+.num{font-variant-numeric:tabular-nums}
+.stp{display:flex;flex-direction:column;align-items:center;gap:1cqh;width:12.5cqw;text-align:center}
+.ln{flex:1;border-top:2.5px dashed var(--mute);margin-top:4cqw}
+.stp .chip{white-space:nowrap}
+.d{width:8cqw;height:8cqw;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;background:var(--card);box-shadow:.15cqw .2cqw 0 var(--ink)}
+.d .i{width:55%;height:55%;vertical-align:0}
+.hl{background:linear-gradient(transparent 55%,var(--teal) 55% 90%,transparent 90%);padding:0 .3cqw}
+.x{color:var(--coralD);font:700 2.4cqw var(--display)}
+@media(prefers-reduced-motion:no-preference){.slide.on{animation:in .35s ease}@keyframes in{from{opacity:0}}}
+</style>
+</head>
+<body>
+<div id="stage">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3.3 2.7-5 6-5s6 1.7 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.2c3 .2 5.5 1.7 5.5 4.8"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M4 15l5-5 4 3 7-8"/><path d="M15 5h5v5"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/></symbol>
+<symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M11 3l1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H10l-5 4v-4H4z"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5L16 9.5"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8 12.5l3 3 5-6"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c3 3 3 14 0 17M12 3.5c-3 3-3 14 0 17"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3"/><path d="M7.5 15h9"/></symbol>
+<symbol id="i-join" viewBox="0 0 24 24"><circle cx="9" cy="12" r="5.5"/><circle cx="15" cy="12" r="5.5"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5c3-1.5 6-1.5 8 1 2-2.5 5-2.5 8-1v14c-3-1.5-6-1.5-8 1-2-2.5-5-2.5-8-1z"/><path d="M12 6v14"/></symbol>
+<symbol id="i-bars" viewBox="0 0 24 24"><path d="M4 20h16"/><rect x="5.5" y="11" width="3" height="9"/><rect x="10.5" y="6" width="3" height="14"/><rect x="15.5" y="14" width="3" height="6"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8M12 16v4"/></symbol>
+<symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 1-1 1.7"/><circle cx="12" cy="16.8" r=".6"/></symbol>
+<symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></symbol>
+<symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+<symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h3l2.5 11h9.5l2-8H7"/><circle cx="10" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3.5L2.5 20.5h19z"/><path d="M12 10v5"/><circle cx="12" cy="17.6" r=".7"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/></symbol>
+<symbol id="i-cpu" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"/></symbol>
+<symbol id="i-flow" viewBox="0 0 24 24"><rect x="3" y="4" width="6" height="5" rx="1"/><rect x="15" y="4" width="6" height="5" rx="1"/><rect x="9" y="15" width="6" height="5" rx="1"/><path d="M6 9v3h12V9M12 12v3"/></symbol>
+<symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></symbol>
+<symbol id="i-loop" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/></symbol>
+<symbol id="i-bike" viewBox="0 0 24 24"><circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-7h5l3 7M10 9l-1.5-3H6M15 9l-2 7"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></symbol>
+<symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h11v10H2zM13 10h5l3 3v3h-8"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></symbol>
+<symbol id="i-coins" viewBox="0 0 24 24"><ellipse cx="9" cy="7" rx="5" ry="2.5"/><path d="M4 7v4c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V7"/><ellipse cx="15" cy="14" rx="5" ry="2.5"/><path d="M10 14v4c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5v-4"/></symbol>
+<symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v4h16v-4"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+</svg>
+
+<!-- 0 TITLE -->
+<section class="slide" style="justify-content:space-between">
+  <div class="col" style="gap:1.5cqh;margin-top:1cqh">
+    <h1 style="font-size:13cqw;align-self:flex-start;padding:0 1.5cqw">BIFlow</h1>
+    <div class="h" style="font-size:3.4cqw;padding-left:1.5cqw">A multi-agent BI pipeline: automated, transparent, traceable</div>
+    <div class="s" style="font-size:1.7cqw;padding-left:1.5cqw">From raw CSV files to an explained dashboard, built with the Design Thinking method</div>
+    <div class="row" style="align-items:center;gap:1cqw;padding:2cqh 1.5cqw 0">
+      <b class="ib" style="width:4.2cqw;height:4.2cqw;background:var(--coral)"><svg class="i"><use href="#i-db"/></svg></b><span class="arrow">→</span>
+      <b class="ib" style="width:4.2cqw;height:4.2cqw"><svg class="i"><use href="#i-flask"/></svg></b><span class="arrow">→</span>
+      <b class="ib" style="width:4.2cqw;height:4.2cqw"><svg class="i"><use href="#i-sparkle"/></svg></b><span class="arrow">→</span>
+      <b class="ib" style="width:4.2cqw;height:4.2cqw"><svg class="i"><use href="#i-join"/></svg></b><span class="arrow">→</span>
+      <b class="ib" style="width:4.2cqw;height:4.2cqw"><svg class="i"><use href="#i-book"/></svg></b><span class="arrow">→</span>
+      <b class="ib" style="width:4.2cqw;height:4.2cqw"><svg class="i"><use href="#i-bars"/></svg></b><span class="arrow">→</span>
+      <b class="ib" style="width:4.2cqw;height:4.2cqw;background:var(--teal)"><svg class="i"><use href="#i-monitor"/></svg></b>
+    </div>
+  </div>
+  <div class="col" style="gap:1.5cqh;margin-bottom:2cqh">
+    <div class="h" style="font-size:2.6cqw;padding-left:.6cqw">Our team</div>
+    <div class="row" style="gap:1.6cqw">
+      <div class="card g1 col ctr" style="gap:1cqh"><b class="ib" style="background:var(--blue)"><svg class="i"><use href="#i-user"/></svg></b><div class="h" style="font-size:2.3cqw">Khairi Hassine</div></div>
+      <div class="card g1 col ctr" style="gap:1cqh"><b class="ib" style="background:var(--amber)"><svg class="i"><use href="#i-user"/></svg></b><div class="h" style="font-size:2.3cqw">Majdi Guermazi</div></div>
+      <div class="card g1 col ctr" style="gap:1cqh"><b class="ib" style="background:var(--coral)"><svg class="i"><use href="#i-user"/></svg></b><div class="h" style="font-size:2.3cqw">Yassine Smaoui</div></div>
+      <div class="card g1 col ctr" style="gap:1cqh"><b class="ib" style="background:var(--teal)"><svg class="i"><use href="#i-user"/></svg></b><div class="h" style="font-size:2.3cqw">Eya Hamdi</div></div>
+      <div class="card g1 col ctr" style="gap:1cqh"><b class="ib" style="background:var(--lav)"><svg class="i"><use href="#i-user"/></svg></b><div class="h" style="font-size:2.3cqw">Maher Hassen</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TOC -->
+<section class="slide">
+  <div><h1>Table of contents</h1><div class="sub">Click a section to jump to it</div></div>
+  <div class="grid g1" id="toc" style="grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(6,1fr);gap:1.2cqw 2cqw"></div>
+</section>
+
+<!-- JOURNEY -->
+<section class="slide" data-toc="Our Design Thinking journey" data-icon="compass">
+  <div><h1>Our Design Thinking journey</h1><div class="sub">Five stages, from people's pain to a tested product</div></div>
+  <div class="row g1" style="align-items:center;padding:0 1cqw"><div class="row g1" style="align-items:flex-start">
+    <div class="stp"><div class="d" style="background:var(--blue)"><svg class="i"><use href="#i-users"/></svg></div><span class="h" style="font-size:3cqw">Empathize</span><span class="chip">3 personas</span></div><span class="ln"></span>
+    <div class="stp"><div class="d" style="background:var(--amber)"><svg class="i"><use href="#i-target"/></svg></div><span class="h" style="font-size:3cqw">Define</span><span class="chip">1 problem · 6 objectives</span></div><span class="ln"></span>
+    <div class="stp"><div class="d" style="background:var(--lav)"><svg class="i"><use href="#i-sparkle"/></svg></div><span class="h" style="font-size:3cqw">Ideate</span><span class="chip">8 agents</span></div><span class="ln"></span>
+    <div class="stp"><div class="d" style="background:var(--coral)"><svg class="i"><use href="#i-flow"/></svg></div><span class="h" style="font-size:3cqw">Prototype</span><span class="chip">15-step pipeline</span></div><span class="ln"></span>
+    <div class="stp"><div class="d" style="background:var(--teal)"><svg class="i"><use href="#i-check"/></svg></div><span class="h" style="font-size:3cqw">Test</span><span class="chip">2 datasets · 149 tests</span></div>
+  </div></div>
+  <div class="row" style="justify-content:center;align-items:center;gap:1cqw;margin-top:auto">
+    <svg class="i" style="width:2.4cqw;height:2.4cqw;color:var(--tealD)"><use href="#i-loop"/></svg>
+    <span class="s" style="font-size:1.7cqw">and back again: every test result fed the next iteration</span>
+  </div>
+</section>
+
+<!-- EMPATHIZE -->
+<section class="slide" data-toc="Empathize: who suffers" data-icon="users">
+  <div><span class="stage-tag">Empathize</span><h1>Who works with BI data today?</h1><div class="sub">Three personas, three pain themes</div></div>
+  <div class="row" style="gap:2cqw">
+    <div class="card g1 ctr col" style="border-top:.8cqh solid var(--blueD)"><b class="ib" style="background:var(--blue)"><svg class="i"><use href="#i-user"/></svg></b><div class="h">Sara</div><div class="s">BI analyst</div><div class="s" style="font-style:italic">"I clean data by hand, row by row"</div></div>
+    <div class="card g1 ctr col" style="border-top:.8cqh solid var(--amberD)"><b class="ib" style="background:var(--amber)"><svg class="i"><use href="#i-trend"/></svg></b><div class="h">Amine</div><div class="s">Marketing manager</div><div class="s" style="font-style:italic">"Why did this KPI drop? I need it now"</div></div>
+    <div class="card g1 ctr col" style="border-top:.8cqh solid var(--coralD)"><b class="ib" style="background:var(--coral)"><svg class="i"><use href="#i-gear"/></svg></b><div class="h">Karim</div><div class="s">Data engineer</div><div class="s" style="font-style:italic">"I can't trust a black box"</div></div>
+  </div>
+  <div class="arrow ctr" style="margin:-.5cqh 0">↓ pain points cluster into ↓</div>
+  <div class="row g1" style="gap:2cqw">
+    <div class="card g1 col ctr" style="background:var(--blue);justify-content:center"><b class="ib"><svg class="i"><use href="#i-clock"/></svg></b><div class="big">Speed</div><div class="s" style="color:var(--ink)">late reports, waiting on analysts</div></div>
+    <div class="card g1 col ctr" style="background:var(--amber);justify-content:center"><b class="ib"><svg class="i"><use href="#i-search"/></svg></b><div class="big">Trust</div><div class="s" style="color:var(--ink)">unexplained numbers, no lineage</div></div>
+    <div class="card g1 col ctr" style="background:var(--coral);justify-content:center"><b class="ib"><svg class="i"><use href="#i-sparkle"/></svg></b><div class="big">Effort</div><div class="s" style="color:var(--ink)">manual cleaning, fragile scripts</div></div>
+  </div>
+</section>
+
+<!-- DEFINE: TODAY -->
+<section class="slide" data-toc="Define: the pipeline today" data-icon="warn">
+  <div><span class="stage-tag">Define</span><h1>The BI pipeline today</h1><div class="sub">Every step depends on one person, and none explains itself</div></div>
+  <div class="row g1" style="align-items:center;gap:.6cqw">
+    <div class="col ctr g1" style="gap:1cqh"><div class="node" style="width:100%;flex:none"><b class="ib sm"><svg class="i"><use href="#i-db"/></svg></b>Raw sources</div><span class="chip c">Karim</span><span class="x">scattered</span></div>
+    <span class="arrow">→</span>
+    <div class="col ctr g1" style="gap:1cqh"><div class="node" style="width:100%;flex:none"><b class="ib sm"><svg class="i"><use href="#i-join"/></svg></b>ETL scripts</div><span class="chip c">Karim</span><span class="x">fragile</span></div>
+    <span class="arrow">→</span>
+    <div class="col ctr g1" style="gap:1cqh"><div class="node" style="width:100%;flex:none"><b class="ib sm"><svg class="i"><use href="#i-flask"/></svg></b>Cleaning</div><span class="chip b">Sara</span><span class="x">manual</span></div>
+    <span class="arrow">→</span>
+    <div class="col ctr g1" style="gap:1cqh"><div class="node" style="width:100%;flex:none"><b class="ib sm"><svg class="i"><use href="#i-book"/></svg></b>KPIs</div><span class="chip b">Sara</span><span class="x">inconsistent</span></div>
+    <span class="arrow">→</span>
+    <div class="col ctr g1" style="gap:1cqh"><div class="node" style="width:100%;flex:none"><b class="ib sm"><svg class="i"><use href="#i-monitor"/></svg></b>Dashboard</div><span class="chip a">Amine</span><span class="x">"why?"</span></div>
+  </div>
+  <div class="bar c"><svg class="i"><use href="#i-warn"/></svg> Slow · manual · unexplainable: people lose time and trust</div>
+</section>
+
+<!-- DEFINE: PROBLEM -->
+<section class="slide" data-toc="Define: problem and How Might We" data-icon="target">
+  <div><span class="stage-tag">Define</span><h1>The problem to solve</h1><div class="sub">Three "How might we" questions, one central problem</div></div>
+  <div class="row" style="align-items:stretch">
+    <div class="card g1 ctr col" style="border-style:dashed"><b class="ib" style="background:var(--blue)"><svg class="i"><use href="#i-doc"/></svg></b><div class="h">HMW</div><div class="s">automate data prep and keep a readable trail?</div></div>
+    <div class="card g1 ctr col" style="border-style:dashed"><b class="ib" style="background:var(--amber)"><svg class="i"><use href="#i-chat"/></svg></b><div class="h">HMW</div><div class="s">explain a KPI change in plain words?</div></div>
+    <div class="card g1 ctr col" style="border-style:dashed"><b class="ib" style="background:var(--coral)"><svg class="i"><use href="#i-shield"/></svg></b><div class="h">HMW</div><div class="s">make people trust an AI pipeline?</div></div>
+  </div>
+  <div class="card notape g1 col ctr flat" style="justify-content:center;background:var(--amber);gap:2cqh">
+    <div class="row" style="align-items:center;gap:1.2cqw;flex-wrap:wrap;justify-content:center"><span class="chip c" style="font-size:1.8cqw">Slow</span><span class="chip c" style="font-size:1.8cqw">Manual</span><span class="chip c" style="font-size:1.8cqw">Unexplainable</span><span class="arrow" style="font-size:3cqw">→</span><span class="chip t" style="font-size:1.8cqw">Automated end to end</span><span class="chip t" style="font-size:1.8cqw">Transparent</span><span class="chip t" style="font-size:1.8cqw">Traceable</span></div>
+    <div class="h" style="font-size:2.2cqw">BIFlow must automate the whole BI pipeline while making every step explainable</div>
+  </div>
+</section>
+
+<!-- OBJECTIVES -->
+<section class="slide" data-toc="Business and data science objectives" data-icon="bars">
+  <div><span class="stage-tag">Define</span><h1>Business → Data science objectives</h1><div class="sub">Each business goal became concrete things to build, with one module per goal</div></div>
+  <div class="col g1" id="obj" style="justify-content:space-between"></div>
+</section>
+
+<!-- IDEATE -->
+<section class="slide" data-toc="Ideate: from ideas to agents" data-icon="sparkle">
+  <div><span class="stage-tag">Ideate</span><h1>From "what if...?" to agents</h1><div class="sub">Brainstorm, mind map, Crazy 8s, then converge</div></div>
+  <div class="row" style="align-items:center;justify-content:center">
+    <span class="chip k">Brainstorm</span><span class="arrow">›</span><span class="chip k">Mind map</span><span class="arrow">›</span><span class="chip k">How Might We</span><span class="arrow">›</span><span class="chip k">Crazy 8s</span><span class="arrow">›</span><span class="chip t">Converge</span>
+  </div>
+  <div class="grid g1" id="ide" style="grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr"></div>
+</section>
+
+<!-- PROTOTYPE: ARCHITECTURE -->
+<section class="slide" data-toc="Prototype: architecture" data-icon="flow">
+  <div><span class="stage-tag">Prototype</span><h1>The architecture we built</h1><div class="sub">Independent services that talk only through the orchestrator</div></div>
+  <div class="bar k"><svg class="i"><use href="#i-compass"/></svg> Orchestrator (LangGraph): runs the steps, retries, resumes, writes the run record</div>
+  <div class="row g1" style="align-items:center;gap:.6cqw" id="arch"></div>
+  <div class="bar t"><svg class="i"><use href="#i-search"/></svg> Auditor: lineage graph, trace report, "Explain this KPI"</div>
+  <div class="row" style="justify-content:center;gap:1cqw;flex-wrap:wrap"><span class="chip"><svg class="i"><use href="#i-box"/></svg> one Docker container per module</span><span class="chip"><svg class="i"><use href="#i-link"/></svg> HTTP + JSON contracts</span><span class="chip"><svg class="i"><use href="#i-layers"/></svg> data passed by reference</span></div>
+</section>
+
+<!-- PROTOTYPE: 15 STEPS -->
+<section class="slide" data-toc="Prototype: one run, 15 steps" data-icon="loop">
+  <div><span class="stage-tag">Prototype</span><h1>One run, fifteen steps</h1><div class="sub">One command: raw files in, explained dashboard out</div></div>
+  <div class="grid g1" id="steps" style="grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(3,1fr);gap:1.2cqw 1.6cqw"></div>
+  <div class="row" style="justify-content:center;gap:1cqw;flex-wrap:wrap"><span class="chip c"><svg class="i"><use href="#i-warn"/></svg> a step fails → the Auditor still explains it</span><span class="chip b"><svg class="i"><use href="#i-loop"/></svg> resume from any step</span><span class="chip a"><svg class="i"><use href="#i-doc"/></svg> config frozen per run</span></div>
+</section>
+
+<!-- PROTOTYPE: TRUST BY DESIGN -->
+<section class="slide" data-toc="Prototype: trust by design" data-icon="shield">
+  <div><span class="stage-tag">Prototype</span><h1>Trust by design</h1><div class="sub">Code computes every number. The LLM only explains, and is checked</div></div>
+  <div class="row g1" style="align-items:center;gap:.8cqw">
+    <div class="node" style="box-shadow:.2cqw .3cqw 0 var(--blue)"><b class="ib" style="background:var(--blue)"><svg class="i"><use href="#i-code"/></svg></b>Code computes<div class="s">KPIs, drivers, anomalies</div></div><span class="arrow">→</span>
+    <div class="node"><b class="ib"><svg class="i"><use href="#i-doc"/></svg></b>Fact sheet<div class="s">only the numbers</div></div><span class="arrow">→</span>
+    <div class="node" style="box-shadow:.2cqw .3cqw 0 var(--lav)"><b class="ib" style="background:var(--lav)"><svg class="i"><use href="#i-pen"/></svg></b>LLM writes<div class="s">plain sentences</div></div><span class="arrow">→</span>
+    <div class="node" style="box-shadow:.2cqw .3cqw 0 var(--amber)"><b class="ib" style="background:var(--amber)"><svg class="i"><use href="#i-search"/></svg></b>Fact-check<div class="s">every number must exist</div></div><span class="arrow">→</span>
+    <div class="col" style="flex:1.1;gap:1.4cqh">
+      <span class="chip t ctr" style="font-size:1.5cqw"><svg class="i"><use href="#i-check"/></svg> pass → published</span>
+      <span class="chip c ctr" style="font-size:1.5cqw"><svg class="i"><use href="#i-ban"/></svg> fail ×3 → template</span>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:1.6cqw">
+    <div class="card col ctr"><b class="ib sm" style="background:var(--teal)"><svg class="i"><use href="#i-layers"/></svg></b><span class="h" style="font-size:2cqw">Lineage everywhere</span><span class="s">every step logs what it did</span></div>
+    <div class="card col ctr"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-book"/></svg></b><span class="h" style="font-size:2cqw">Rules decide</span><span class="s">recommendations come from a rule table</span></div>
+    <div class="card col ctr"><b class="ib sm" style="background:var(--coral)"><svg class="i"><use href="#i-shield"/></svg></b><span class="h" style="font-size:2cqw">No silent deletes</span><span class="s">rows in − dropped = rows out</span></div>
+    <div class="card col ctr"><b class="ib sm" style="background:var(--blue)"><svg class="i"><use href="#i-cpu"/></svg></b><span class="h" style="font-size:2cqw">Works without LLM</span><span class="s">every LLM step has a fallback</span></div>
+  </div>
+</section>
+
+<!-- TECH -->
+<section class="slide" data-toc="Technology stack" data-icon="gear">
+  <div><span class="stage-tag">Prototype</span><h1>Technology stack</h1><div class="sub">Free, open source and market standard, one tool per job</div></div>
+  <div class="grid g1" id="tech" style="grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr)"></div>
+</section>
+
+<!-- DATA -->
+<section class="slide" data-toc="The data" data-icon="db">
+  <div><span class="stage-tag">Prototype</span><h1>The data</h1><div class="sub">A real, messy e-commerce dataset, and a second sector to prove we scale</div></div>
+  <div class="row g1" style="gap:2.4cqw;align-items:stretch">
+    <div class="card col g1" style="flex:1.6;gap:1.6cqh;justify-content:space-between">
+      <div class="row" style="align-items:center;gap:1cqw"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-cart"/></svg></b><span class="h">Olist, Brazilian e-commerce</span></div>
+      <div class="row" style="gap:1.2cqw">
+        <div class="col ctr g1" style="gap:0"><span class="big num" style="color:var(--tealD);font-size:7cqw">9</span><span class="s">linked tables</span></div>
+        <div class="col ctr g1" style="gap:0"><span class="big num" style="color:var(--amberD);font-size:7cqw">99k</span><span class="s">orders</span></div>
+        <div class="col ctr g1" style="gap:0"><span class="big num" style="color:var(--coralD);font-size:7cqw">1M</span><span class="s">location rows</span></div>
+        <div class="col ctr g1" style="gap:0"><span class="big num" style="color:var(--blueD);font-size:3.4cqw;white-space:nowrap">2016–18</span><span class="s">time span</span></div>
+      </div>
+      <div class="row" style="justify-content:center;align-items:center;gap:.6cqw"><b class="ib xs"><svg class="i"><use href="#i-db"/></svg></b><b class="ib xs"><svg class="i"><use href="#i-db"/></svg></b><b class="ib xs"><svg class="i"><use href="#i-db"/></svg></b><b class="ib xs"><svg class="i"><use href="#i-db"/></svg></b><span class="arrow">→</span><b class="ib sm" style="background:var(--teal)"><svg class="i"><use href="#i-join"/></svg></b><span class="arrow">←</span><b class="ib xs"><svg class="i"><use href="#i-db"/></svg></b><b class="ib xs"><svg class="i"><use href="#i-db"/></svg></b><b class="ib xs"><svg class="i"><use href="#i-db"/></svg></b><b class="ib xs"><svg class="i"><use href="#i-db"/></svg></b><b class="ib xs"><svg class="i"><use href="#i-db"/></svg></b></div>
+      <div class="row" style="flex-wrap:wrap;gap:.8cqw"><span class="chip c">duplicates</span><span class="chip c">missing values</span><span class="chip c">Portuguese categories</span><span class="chip c">zip codes as text</span></div>
+    </div>
+    <div class="card col g1" style="gap:1.6cqh;justify-content:space-between">
+      <div class="row" style="align-items:center;gap:1cqw"><b class="ib sm" style="background:var(--teal)"><svg class="i"><use href="#i-bike"/></svg></b><span class="h">Bike sharing, Washington DC</span></div>
+      <div class="row" style="gap:1.2cqw">
+        <div class="col ctr g1" style="gap:0"><span class="big num" style="color:var(--tealD);font-size:7cqw">1</span><span class="s">table</span></div>
+        <div class="col ctr g1" style="gap:0"><span class="big num" style="color:var(--blueD);font-size:7cqw">731</span><span class="s">days</span></div>
+      </div>
+      <div class="row" style="justify-content:center;align-items:center;gap:1cqw"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-sun"/></svg></b><b class="ib sm" style="background:var(--blue)"><svg class="i"><use href="#i-clock"/></svg></b><b class="ib sm" style="background:var(--teal)"><svg class="i"><use href="#i-bike"/></svg></b></div>
+      <div class="row" style="flex-wrap:wrap;gap:.8cqw"><span class="chip t">another sector</span><span class="chip t">another shape</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section class="slide" data-toc="The dashboard" data-icon="monitor">
+  <div><span class="stage-tag">Prototype</span><h1>What the user sees</h1><div class="sub">Six tabs, generated from config: a new dataset gets its dashboard with no code</div></div>
+  <div class="row g1" style="gap:2.4cqw;align-items:stretch">
+    <div class="card notape col flat" style="flex:1.5;gap:1.2cqh;padding:1.4cqh 1.4cqw">
+      <div class="row" style="gap:.5cqw;border-bottom:1.5px dashed var(--line);padding-bottom:.8cqh;flex-wrap:wrap"><span class="chip t" style="font-size:1.1cqw">Overview</span><span class="chip" style="font-size:1.1cqw">KPI explorer</span><span class="chip" style="font-size:1.1cqw">Insights</span><span class="chip" style="font-size:1.1cqw">Data quality</span><span class="chip" style="font-size:1.1cqw">Lineage</span><span class="chip" style="font-size:1.1cqw">Explain</span></div>
+      <div class="row" style="gap:1cqw">
+        <div class="card notape g1 col flat" style="padding:1cqh .8cqw;gap:.3cqh"><span class="s" style="font-size:1.1cqw">Revenue</span><span class="h num" style="font-size:2.2cqw">R$ 985k</span><span class="s" style="font-size:1cqw;color:var(--coralD)">−4.1%</span></div>
+        <div class="card notape g1 col flat" style="padding:1cqh .8cqw;gap:.3cqh"><span class="s" style="font-size:1.1cqw">Delivery time</span><span class="h num" style="font-size:2.2cqw">7.7 d</span><span class="s" style="font-size:1cqw;color:var(--tealD)">−13.7%</span></div>
+        <div class="card notape g1 col flat" style="padding:1cqh .8cqw;gap:.3cqh"><span class="s" style="font-size:1.1cqw">Low reviews</span><span class="h num" style="font-size:2.2cqw">9.5%</span><span class="s" style="font-size:1cqw;color:var(--tealD)">−1.3%</span></div>
+      </div>
+      <svg viewBox="0 0 300 90" class="g1" style="width:100%" aria-label="trend chart with one anomaly">
+        <polyline fill="none" stroke="#3F6CA8" stroke-width="2.5" stroke-linejoin="round" points="5,80 25,72 45,66 65,64 85,58 105,55 125,50 145,18 165,44 185,42 205,38 225,36 245,34 265,33 290,36"/>
+        <path d="M139 12l12 12M151 12l-12 12" stroke="#C4513F" stroke-width="3"/>
+        <text x="156" y="12" font-family="Patrick Hand" font-size="11" fill="#C4513F">Black Friday</text>
+        <line x1="5" y1="86" x2="295" y2="86" stroke="#6E6859" stroke-width="1"/>
+      </svg>
+    </div>
+    <div class="col g1" style="justify-content:center;gap:2cqh">
+      <div class="row" style="align-items:center;gap:1.2cqw"><b class="ib sm" style="background:var(--blue)"><svg class="i"><use href="#i-trend"/></svg></b><span class="h" style="font-size:2.1cqw">Trends and anomalies</span></div>
+      <div class="row" style="align-items:center;gap:1.2cqw"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-bars"/></svg></b><span class="h" style="font-size:2.1cqw">"Why did it move?"</span></div>
+      <div class="row" style="align-items:center;gap:1.2cqw"><b class="ib sm" style="background:var(--coral)"><svg class="i"><use href="#i-star"/></svg></b><span class="h" style="font-size:2.1cqw">Recommendations</span></div>
+      <div class="row" style="align-items:center;gap:1.2cqw"><b class="ib sm" style="background:var(--teal)"><svg class="i"><use href="#i-chat"/></svg></b><span class="h" style="font-size:2.1cqw">Ask in your own words</span></div>
+      <div class="row" style="align-items:center;gap:1.2cqw"><b class="ib sm" style="background:var(--lav)"><svg class="i"><use href="#i-upload"/></svg></b><span class="h" style="font-size:2.1cqw">Upload your own data</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEST: FULL RUN -->
+<section class="slide" data-toc="Test: the full run" data-icon="clock">
+  <div><span class="stage-tag">Test</span><h1>Full Olist run, end to end</h1><div class="sub">100k orders, every module real, one command</div></div>
+  <div class="row g1" style="gap:2.4cqw;align-items:stretch">
+    <div class="col" style="flex:1;gap:1.6cqh">
+      <div class="card col ctr"><div class="big num" style="color:var(--tealD);font-size:5.4cqw">4 min</div><div class="s">raw files → dashboard (target: under 10)</div></div>
+      <div class="card col ctr"><div class="big num" style="color:var(--blueD);font-size:5.4cqw">99,441</div><div class="s">orders, one row each: reconciled exactly</div></div>
+      <div class="card col ctr"><div class="big num" style="color:var(--amberD);font-size:5.4cqw">51 / 51</div><div class="s">data tests passed</div></div>
+    </div>
+    <div class="card notape col flat" style="flex:1.5;gap:1cqh">
+      <div class="h" style="font-size:2.1cqw">Where the 247 seconds go</div>
+      <div class="col g1" id="timebars" style="justify-content:space-around;gap:.6cqh"></div>
+      <div class="s" style="font-size:1.1cqw">The data work takes about 2.5 minutes; the audit report is LLM writing (it falls back to templates when no key is set).</div>
+    </div>
+  </div>
+</section>
+
+<!-- TEST: OBJECTIVES MET -->
+<section class="slide" data-toc="Test: objectives measured" data-icon="target">
+  <div><span class="stage-tag">Test</span><h1>Did we reach the objectives?</h1><div class="sub">Each module measures itself (one command: eval --all)</div></div>
+  <div class="grid g1" id="kpis" style="grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:1.8cqw"></div>
+  <div class="row" style="justify-content:center;gap:1cqw;flex-wrap:wrap"><span class="chip t"><svg class="i"><use href="#i-check"/></svg> 149 automated tests passing</span><span class="chip b"><svg class="i"><use href="#i-loop"/></svg> identical results on every rerun</span></div>
+</section>
+
+<!-- TEST: WHAT IT FOUND -->
+<section class="slide" data-toc="Test: what the pipeline found" data-icon="eye">
+  <div><span class="stage-tag">Test</span><h1>What the pipeline found on its own</h1><div class="sub">Real Olist patterns, found without being told</div></div>
+  <div class="row g1" style="gap:2.2cqw;align-items:stretch">
+    <div class="card col g1" style="gap:1.2cqh">
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--coral)"><svg class="i"><use href="#i-sparkle"/></svg></b><span class="h" style="font-size:2.2cqw">Black Friday spike</span></div>
+      <div class="row g1" style="align-items:flex-end;gap:1cqw;justify-content:center">
+        <div class="col ctr" style="gap:.4cqh"><div style="width:5cqw;height:13cqh;background:var(--line);border:2px solid var(--ink);border-bottom:0"></div><span class="s" style="font-size:1.1cqw">expected</span><span class="num s" style="font-size:1.1cqw">R$ 793k</span></div>
+        <div class="col ctr" style="gap:.4cqh"><div style="width:5cqw;height:19cqh;background:var(--coral);border:2px solid var(--ink);border-bottom:0"></div><span class="s" style="font-size:1.1cqw">Nov 2017</span><span class="num s" style="font-size:1.1cqw">R$ 1.15M</span></div>
+      </div>
+      <span class="chip a" style="font-size:1.2cqw">plan capacity for next year</span>
+    </div>
+    <div class="card col g1" style="gap:1.2cqh">
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-truck"/></svg></b><span class="h" style="font-size:2.2cqw">Late = bad reviews</span></div>
+      <svg viewBox="0 0 200 110" class="g1" style="width:100%" aria-label="late deliveries and bad reviews move together">
+        <polyline fill="none" stroke="#B7821A" stroke-width="2.5" points="10,80 35,76 60,70 85,35 110,74 135,40 160,25 190,72"/>
+        <polyline fill="none" stroke="#C4513F" stroke-width="2.5" stroke-dasharray="5 4" points="10,86 35,82 60,77 85,46 110,80 135,50 160,38 190,79"/>
+        <text x="8" y="16" font-family="Patrick Hand" font-size="12" fill="#B7821A">late deliveries</text>
+        <text x="100" y="16" font-family="Patrick Hand" font-size="12" fill="#C4513F">bad reviews</text>
+      </svg>
+      <div class="row" style="align-items:center;gap:.8cqw;justify-content:center"><span class="big num" style="color:var(--amberD);font-size:3.6cqw">0.94</span><span class="s">correlation</span></div>
+    </div>
+    <div class="card col g1" style="gap:1.2cqh">
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--blue)"><svg class="i"><use href="#i-coins"/></svg></b><span class="h" style="font-size:2.2cqw">Why revenue fell</span></div>
+      <div class="col g1" style="justify-content:center;gap:1cqh">
+        <div class="row" style="align-items:center;gap:.6cqw"><span class="s" style="width:7cqw;font-size:1.2cqw">boleto</span><div style="height:2.6cqh;width:14cqw;background:var(--coral);border:2px solid var(--ink)"></div><span class="num s" style="font-size:1.1cqw">−52.6k</span></div>
+        <div class="row" style="align-items:center;gap:.6cqw"><span class="s" style="width:7cqw;font-size:1.2cqw">debit card</span><div style="height:2.6cqh;width:1.8cqw;background:var(--teal);border:2px solid var(--ink)"></div><span class="num s" style="font-size:1.1cqw">+6.5k</span></div>
+        <div class="row" style="align-items:center;gap:.6cqw"><span class="s" style="width:7cqw;font-size:1.2cqw">credit card</span><div style="height:2.6cqh;width:1.6cqw;background:var(--teal);border:2px solid var(--ink)"></div><span class="num s" style="font-size:1.1cqw">+5.8k</span></div>
+        <div class="row" style="align-items:center;gap:.6cqw"><span class="s" style="width:7cqw;font-size:1.2cqw">voucher</span><div style="height:2.6cqh;width:.7cqw;background:var(--coral);border:2px solid var(--ink)"></div><span class="num s" style="font-size:1.1cqw">−2.2k</span></div>
+      </div>
+      <span class="chip b" style="font-size:1.2cqw">Aug 2018: −42.5k, explained in plain words</span>
+    </div>
+  </div>
+</section>
+
+<!-- TEST: SCALE -->
+<section class="slide" data-toc="Test: a second sector" data-icon="globe">
+  <div><span class="stage-tag">Test</span><h1>Same pipeline, new sector</h1><div class="sub">Bike sharing onboarded with four config files and zero code</div></div>
+  <div class="row g1" style="align-items:center;gap:1.2cqw">
+    <div class="col" style="flex:1;gap:1.4cqh">
+      <span class="chip" style="font-size:1.5cqw"><svg class="i"><use href="#i-doc"/></svg> dataset config</span>
+      <span class="chip" style="font-size:1.5cqw"><svg class="i"><use href="#i-code"/></svg> one SQL model</span>
+      <span class="chip" style="font-size:1.5cqw"><svg class="i"><use href="#i-book"/></svg> KPI catalog</span>
+      <span class="chip" style="font-size:1.5cqw"><svg class="i"><use href="#i-star"/></svg> rule table</span>
+    </div>
+    <span class="arrow" style="font-size:4cqw">→</span>
+    <div class="node" style="flex:1;box-shadow:.2cqw .3cqw 0 var(--lav)"><b class="ib" style="background:var(--lav)"><svg class="i"><use href="#i-flow"/></svg></b>Same 15 steps<div class="s">no code change</div></div>
+    <span class="arrow" style="font-size:4cqw">→</span>
+    <div class="card col ctr" style="flex:1.3;gap:1.2cqh">
+      <div class="row" style="align-items:center;gap:1cqw"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-sun"/></svg></b><span class="arrow">↔</span><b class="ib sm" style="background:var(--teal)"><svg class="i"><use href="#i-bike"/></svg></b></div>
+      <span class="h">Demand follows temperature</span>
+      <span class="big num" style="color:var(--tealD);font-size:4cqw">0.86</span>
+      <span class="chip t" style="font-size:1.2cqw">size the fleet by season</span>
+    </div>
+  </div>
+  <div class="bar k"><svg class="i"><use href="#i-upload"/></svg> And for data with the same structure: upload the CSV files from the dashboard, then run</div>
+</section>
+
+<!-- ITERATE -->
+<section class="slide" data-toc="Iterate: what we learned, what is next" data-icon="loop">
+  <div><span class="stage-tag">Iterate</span><h1>What testing taught us</h1><div class="sub">Running the real pipeline exposed problems that unit tests did not</div></div>
+  <div class="row g1" style="gap:2.4cqw;align-items:stretch">
+    <div class="card col g1" style="gap:1.4cqh;justify-content:space-around">
+      <div class="h" style="font-size:3cqw">Fixed during integration</div>
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--teal)"><svg class="i"><use href="#i-clock"/></svg></b><span class="s" style="color:var(--ink);font-size:1.9cqw">Cleaning <span class="num hl">206 s → 45 s</span>, same output</span></div>
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--teal)"><svg class="i"><use href="#i-link"/></svg></b><span class="s" style="color:var(--ink);font-size:1.9cqw">KPI trace now reaches the raw files</span></div>
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--teal)"><svg class="i"><use href="#i-search"/></svg></b><span class="s" style="color:var(--ink);font-size:1.9cqw">Explain names the true driver of a drop</span></div>
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--teal)"><svg class="i"><use href="#i-box"/></svg></b><span class="s" style="color:var(--ink);font-size:1.9cqw">Starts on restricted networks, without a key</span></div>
+    </div>
+    <div class="card col g1" style="gap:1.4cqh;justify-content:space-around">
+      <div class="h" style="font-size:3cqw">Next iteration</div>
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-pen"/></svg></b><span class="s" style="color:var(--ink);font-size:1.9cqw">Approve or reject review items in the dashboard</span></div>
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-upload"/></svg></b><span class="s" style="color:var(--ink);font-size:1.9cqw">Onboard a new data structure from the dashboard</span></div>
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-globe"/></svg></b><span class="s" style="color:var(--ink);font-size:1.9cqw">Semantic model for KPI search</span></div>
+      <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-users"/></svg></b><span class="s" style="color:var(--ink);font-size:1.9cqw">Time the manual baseline with real users</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- THANK YOU -->
+<section class="slide" style="justify-content:center;align-items:center;text-align:center;gap:3cqh">
+  <b class="ib" style="width:8cqw;height:8cqw;background:var(--teal)"><svg class="i"><use href="#i-check"/></svg></b>
+  <h1 style="font-size:8.5cqw;padding:0 2cqw">Thank you for your attention</h1>
+  <div class="h" style="font-size:3cqw;color:var(--mute)">BIFlow</div>
+</section>
+
+<div class="nav"><button id="prev" aria-label="Previous slide">‹ Prev</button><div class="dots" id="dots"></div><span><span id="n" class="num">1</span> / <span id="tot" class="num"></span> &nbsp; <button id="next" aria-label="Next slide">Next ›</button></span></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const I=n=>`<svg class="i"><use href="#i-${n}"/></svg>`;
+
+// Business objective -> data science objectives (module that delivers it)
+const objs=[["clock","BO1 · Reduce time-to-insight","t",["Orchestrated pipeline","Automated ETL (dbt)","Auto dashboard"],"Gateway + ETL"],
+["search","BO2 · Build trust (XAI)","a",["Lineage graph","Trace report","Explain a KPI"],"Auditor"],
+["sparkle","BO3 · Cut manual cleaning","c",["Profiling","Rules + ML cleaning","Review queue"],"Profile & Clean"],
+["shield","BO4 · Improve reliability","b",["Schema contracts","Quality score 0–100","CSV / SQL / API"],"Ingest & Quality"],
+["globe","BO5 · Scale across sectors","k",["KPI catalog","KPI search (RAG)","Config-only onboarding"],"Semantic & KPI"],
+["target","BO6 · Decide faster","t",["Trends & anomalies","Why it moved","Recommendations"],"Analyst + Dashboard"]];
+$("obj").innerHTML=objs.map(o=>`<div class="row" style="align-items:center"><span class="chip ${o[2]}" style="width:27cqw;font-size:1.5cqw;padding:1cqh 1cqw">${I(o[0])} ${o[1]}</span><span class="arrow">→</span><div class="row g1" style="flex-wrap:wrap;gap:.7cqw">${o[3].map(x=>`<span class="chip">${x}</span>`).join("")}</div><span class="s" style="width:14cqw;text-align:right;font-size:1.3cqw">${o[4]}</span></div>`).join("");
+
+// Ideate: what if... -> agent
+const ide=[["flask","Scan quality first","Profiler"],["sparkle","Auto-fix obvious errors","Cleaner"],["join","Generate the joins","ETL"],["book","KPIs came from a glossary","Semantic & KPI"],["bars","Spot trends itself","Analyst"],["monitor","Dashboards build themselves","Dashboard"],["question","Every number has a why","Auditor"],["compass","One thing coordinates all","Orchestrator"]];
+$("ide").innerHTML=ide.map((x,i)=>`<div class="card col ctr" style="justify-content:center;gap:.7cqh;${i==7?'background:var(--lav)':''}"><b class="ib" style="width:4.6cqw;height:4.6cqw">${I(x[0])}</b><div class="s">"What if... ${x[1][0].toLowerCase()+x[1].slice(1)}?"</div><span class="chip t">${x[2]}</span></div>`).join("");
+
+// Architecture: the modules in pipeline order
+const arch=[["db","Ingest & Quality","BO4","b"],["flask","Profile & Clean","BO3","c"],["join","ETL (dbt)","BO1","t"],["book","Semantic & KPI","BO5","k"],["bars","Analyst","BO6","a"],["monitor","Dashboard","BO6","a"]];
+$("arch").innerHTML=arch.map((x,i)=>(i?'<span class="arrow">→</span>':'')+`<div class="node"><b class="ib" style="width:4.4cqw;height:4.4cqw;background:var(--${{b:'blue',c:'coral',t:'teal',k:'lav',a:'amber'}[x[3]]})">${I(x[0])}</b>${x[1]}<div class="s" style="font-size:1.1cqw">${x[2]}</div></div>`).join("");
+
+// 15 steps, grouped by colour (module)
+const steps=[["db","Load files","b"],["shield","Check format","b"],["search","Scan data","c"],["bars","Quality score","b"],["sparkle","Clean","c"],
+["search","Scan again","c"],["shield","Check cleaned","b"],["bars","Score again","b"],["join","Build tables","t"],["book","Compute KPIs","k"],
+["globe","Index KPIs","k"],["trend","Analyse","a"],["monitor","Dashboard","a"],["layers","Lineage map","t"],["doc","Audit report","t"]];
+const col={b:"blue",c:"coral",t:"teal",k:"lav",a:"amber"};
+$("steps").innerHTML=steps.map((x,i)=>`<div class="row" style="align-items:center;gap:.8cqw;background:var(--card);border:1.5px solid var(--ink);border-radius:.5cqw;padding:.8cqh .8cqw;box-shadow:.15cqw .2cqw 0 var(--${col[x[2]]})"><b class="big num" style="font-size:2.6cqw;color:var(--mute);width:2.6cqw">${i+1}</b><b class="ib xs" style="background:var(--${col[x[2]]})">${I(x[0])}</b><span class="h" style="font-size:1.8cqw">${x[1]}</span></div>`).join("");
+
+// Tech stack
+const tech=[["Orchestration","LangGraph + FastAPI","k"],["Ingest & checks","pandas + pandera","b"],["Cleaning","pandas + scikit-learn","c"],["Warehouse","DuckDB + dbt","t"],
+["KPI search","ChromaDB","k"],["Analysis","scipy + statsmodels","a"],["Dashboard","Streamlit + Plotly","a"],["Lineage","networkx","t"],
+["LLM (main)","gpt-oss-120b","k"],["LLM (fast)","gpt-oss-20b","k"],["Delivery","Docker Compose","b"],["Quality","pytest + CI","t"]];
+$("tech").innerHTML=tech.map(x=>`<div class="card col ctr" style="justify-content:center"><div class="s">${x[0]}</div><span class="chip ${x[2]}" style="font-size:1.4cqw;margin-top:.8cqh">${x[1]}</span></div>`).join("");
+
+// Full run: seconds per group of steps (run 20261029-230314-10c5)
+const tb=[["Load + check",11.4,"b"],["Scan data ×2",43.9,"c"],["Quality score ×2",13.1,"b"],["Clean",56.2,"c"],["Build tables",21.1,"t"],["KPIs + analysis",8.7,"a"],["Audit report",92.4,"k"]];
+const mx=Math.max(...tb.map(x=>x[1]));
+$("timebars").innerHTML=tb.map(x=>`<div class="row" style="align-items:center;gap:.8cqw"><span class="s" style="width:11cqw;font-size:1.2cqw;text-align:right">${x[0]}</span><div style="height:2.6cqh;width:calc(${x[1]/mx} * 26cqw);background:var(--${col[x[2]]});border:2px solid var(--ink);border-radius:0 .4cqw .4cqw 0"></div><span class="num s" style="font-size:1.2cqw">${Math.round(x[1])} s</span></div>`).join("");
+
+// Objectives measured
+const kp=[["BO1","clock","Same numbers every run","4 min full data","t"],["BO2","search","Lineage coverage","80%","a"],["BO3","sparkle","Silent deletions","0","c"],
+["BO4","shield","Schema errors caught","100%","b"],["BO5","globe","Right KPI in top 3","91%","k"],["BO6","target","Planted anomalies found","100%","t"]];
+$("kpis").innerHTML=kp.map(x=>`<div class="card col ctr" style="justify-content:center;gap:.6cqh"><div class="row" style="align-items:center;gap:.8cqw"><b class="ib xs" style="background:var(--${col[x[4]]})">${I(x[1])}</b><span class="h" style="font-size:2cqw">${x[0]}</span></div><span class="big num" style="font-size:4.4cqw;color:var(--ink)">${x[3]}</span><span class="s">${x[2]}</span></div>`).join("");
+
+// Paging
+const S=[...document.querySelectorAll(".slide")];let i=0;$("tot").textContent=S.length;
+$("dots").innerHTML=S.map((_,k)=>`<i tabindex="0" role="button" aria-label="Go to slide ${k+1}" data-k="${k}"></i>`).join("");
+function go(k){i=Math.max(0,Math.min(S.length-1,k));S.forEach((s,j)=>s.classList.toggle("on",j==i));[...$("dots").children].forEach((d,j)=>d.classList.toggle("on",j==i));$("n").textContent=i+1;try{history.replaceState(null,"","#"+(i+1))}catch(e){}}
+$("prev").onclick=()=>go(i-1);$("next").onclick=()=>go(i+1);
+$("dots").onclick=e=>{if(e.target.dataset.k)go(+e.target.dataset.k)};
+$("dots").onkeydown=e=>{if(e.key=="Enter"&&e.target.dataset.k)go(+e.target.dataset.k)};
+document.onkeydown=e=>{if(e.target.closest&&e.target.closest("#toc,#dots")&&e.key==" ")return;if(["ArrowRight","PageDown"," "].includes(e.key))go(i+1);if(["ArrowLeft","PageUp"].includes(e.key))go(i-1)};
+let x0=null;$("stage").addEventListener("touchstart",e=>{x0=e.touches[0].clientX},{passive:true});
+$("stage").addEventListener("touchend",e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40)go(i+(dx<0?1:-1));x0=null});
+
+// Table of contents from the sections that carry data-toc
+const toc=S.map((s,k)=>[s,k]).filter(([s])=>s.dataset.toc);
+$("toc").innerHTML=toc.map(([s,k],n)=>`<div class="card row" data-k="${k}" tabindex="0" role="button" style="align-items:center;gap:1cqw;cursor:pointer;padding:.8cqh 1cqw"><b class="big num" style="color:var(--tealD);font-size:3cqw;width:3cqw">${n+1}</b><span class="h g1" style="font-size:1.8cqw">${s.dataset.toc}</span><b class="ib xs">${I(s.dataset.icon)}</b></div>`).join("");
+$("toc").onclick=e=>{const c=e.target.closest("[data-k]");if(c)go(+c.dataset.k)};
+$("toc").onkeydown=e=>{if(e.key=="Enter"){const c=e.target.closest("[data-k]");if(c)go(+c.dataset.k)}};
+go((+location.hash.slice(1)||1)-1);
+</script>
+</body>
+</html>
