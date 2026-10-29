@@ -133,12 +133,12 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 <!-- TOC -->
 <section class="slide">
   <div><h1>Table of contents</h1><div class="sub">Click a section to jump to it</div></div>
-  <div class="grid g1" id="toc" style="grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(6,1fr);gap:1.2cqw 2cqw"></div>
+  <div class="grid g1" id="toc" style="grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(4,1fr);gap:1.8cqw 3cqw"></div>
 </section>
 
 <!-- JOURNEY -->
-<section class="slide" data-toc="Our Design Thinking journey" data-icon="compass">
-  <div><h1>Our Design Thinking journey</h1><div class="sub">Five stages, from people's pain to a tested product</div></div>
+<section class="slide" data-toc="Overview: our Design Thinking journey" data-icon="compass">
+  <div><span class="stage-tag">1 · Overview</span><h1>Our Design Thinking journey</h1><div class="sub">Five stages, from people's pain to a tested product</div></div>
   <div class="row g1" style="align-items:center;padding:0 1cqw"><div class="row g1" style="align-items:flex-start">
     <div class="stp"><div class="d" style="background:var(--blue)"><svg class="i"><use href="#i-users"/></svg></div><span class="h" style="font-size:3cqw">Empathize</span><span class="chip">3 personas</span></div><span class="ln"></span>
     <div class="stp"><div class="d" style="background:var(--amber)"><svg class="i"><use href="#i-target"/></svg></div><span class="h" style="font-size:3cqw">Define</span><span class="chip">1 problem · 6 objectives</span></div><span class="ln"></span>
@@ -153,8 +153,8 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- EMPATHIZE -->
-<section class="slide" data-toc="Empathize: who suffers" data-icon="users">
-  <div><span class="stage-tag">Empathize</span><h1>Who works with BI data today?</h1><div class="sub">Three personas, three pain themes</div></div>
+<section class="slide" data-toc="Empathize: the people and their pain" data-icon="users">
+  <div><span class="stage-tag">2 · Empathize</span><h1>Who works with BI data today?</h1><div class="sub">Three personas, three pain themes</div></div>
   <div class="row" style="gap:2cqw">
     <div class="card g1 ctr col" style="border-top:.8cqh solid var(--blueD)"><b class="ib" style="background:var(--blue)"><svg class="i"><use href="#i-user"/></svg></b><div class="h">Sara</div><div class="s">BI analyst</div><div class="s" style="font-style:italic">"I clean data by hand, row by row"</div></div>
     <div class="card g1 ctr col" style="border-top:.8cqh solid var(--amberD)"><b class="ib" style="background:var(--amber)"><svg class="i"><use href="#i-trend"/></svg></b><div class="h">Amine</div><div class="s">Marketing manager</div><div class="s" style="font-style:italic">"Why did this KPI drop? I need it now"</div></div>
@@ -169,8 +169,8 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- DEFINE: TODAY -->
-<section class="slide" data-toc="Define: the pipeline today" data-icon="warn">
-  <div><span class="stage-tag">Define</span><h1>The BI pipeline today</h1><div class="sub">Every step depends on one person, and none explains itself</div></div>
+<section class="slide" data-toc="Define: the problem and the objectives" data-icon="target">
+  <div><span class="stage-tag">3 · Define</span><h1>The BI pipeline today</h1><div class="sub">Every step depends on one person, and none explains itself</div></div>
   <div class="row g1" style="align-items:center;gap:.6cqw">
     <div class="col ctr g1" style="gap:1cqh"><div class="node" style="width:100%;flex:none"><b class="ib sm"><svg class="i"><use href="#i-db"/></svg></b>Raw sources</div><span class="chip c">Karim</span><span class="x">scattered</span></div>
     <span class="arrow">→</span>
@@ -186,8 +186,8 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- DEFINE: PROBLEM -->
-<section class="slide" data-toc="Define: problem and How Might We" data-icon="target">
-  <div><span class="stage-tag">Define</span><h1>The problem to solve</h1><div class="sub">Three "How might we" questions, one central problem</div></div>
+<section class="slide" data-sub="1">
+  <div><span class="stage-tag">3 · Define</span><h1>The problem to solve</h1><div class="sub">Three "How might we" questions, one central problem</div></div>
   <div class="row" style="align-items:stretch">
     <div class="card g1 ctr col" style="border-style:dashed"><b class="ib" style="background:var(--blue)"><svg class="i"><use href="#i-doc"/></svg></b><div class="h">HMW</div><div class="s">automate data prep and keep a readable trail?</div></div>
     <div class="card g1 ctr col" style="border-style:dashed"><b class="ib" style="background:var(--amber)"><svg class="i"><use href="#i-chat"/></svg></b><div class="h">HMW</div><div class="s">explain a KPI change in plain words?</div></div>
@@ -200,14 +200,14 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- OBJECTIVES -->
-<section class="slide" data-toc="Business and data science objectives" data-icon="bars">
-  <div><span class="stage-tag">Define</span><h1>Business → Data science objectives</h1><div class="sub">Each business goal became concrete things to build, with one module per goal</div></div>
+<section class="slide" data-sub="1">
+  <div><span class="stage-tag">3 · Define</span><h1>Business → Data science objectives</h1><div class="sub">Each business goal became concrete things to build, with one module per goal</div></div>
   <div class="col g1" id="obj" style="justify-content:space-between"></div>
 </section>
 
 <!-- IDEATE -->
 <section class="slide" data-toc="Ideate: from ideas to agents" data-icon="sparkle">
-  <div><span class="stage-tag">Ideate</span><h1>From "what if...?" to agents</h1><div class="sub">Brainstorm, mind map, Crazy 8s, then converge</div></div>
+  <div><span class="stage-tag">4 · Ideate</span><h1>From "what if...?" to agents</h1><div class="sub">Brainstorm, mind map, Crazy 8s, then converge</div></div>
   <div class="row" style="align-items:center;justify-content:center">
     <span class="chip k">Brainstorm</span><span class="arrow">›</span><span class="chip k">Mind map</span><span class="arrow">›</span><span class="chip k">How Might We</span><span class="arrow">›</span><span class="chip k">Crazy 8s</span><span class="arrow">›</span><span class="chip t">Converge</span>
   </div>
@@ -215,8 +215,8 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- PROTOTYPE: ARCHITECTURE -->
-<section class="slide" data-toc="Prototype: architecture" data-icon="flow">
-  <div><span class="stage-tag">Prototype</span><h1>The architecture we built</h1><div class="sub">Independent services that talk only through the orchestrator</div></div>
+<section class="slide" data-toc="Prototype: the solution we built" data-icon="flow">
+  <div><span class="stage-tag">5 · Prototype</span><h1>The architecture we built</h1><div class="sub">Independent services that talk only through the orchestrator</div></div>
   <div class="bar k"><svg class="i"><use href="#i-compass"/></svg> Orchestrator (LangGraph): runs the steps, retries, resumes, writes the run record</div>
   <div class="row g1" style="align-items:center;gap:.6cqw" id="arch"></div>
   <div class="bar t"><svg class="i"><use href="#i-search"/></svg> Auditor: lineage graph, trace report, "Explain this KPI"</div>
@@ -224,15 +224,15 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- PROTOTYPE: 15 STEPS -->
-<section class="slide" data-toc="Prototype: one run, 15 steps" data-icon="loop">
-  <div><span class="stage-tag">Prototype</span><h1>One run, fifteen steps</h1><div class="sub">One command: raw files in, explained dashboard out</div></div>
+<section class="slide" data-sub="1">
+  <div><span class="stage-tag">5 · Prototype</span><h1>One run, fifteen steps</h1><div class="sub">One command: raw files in, explained dashboard out</div></div>
   <div class="grid g1" id="steps" style="grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(3,1fr);gap:1.2cqw 1.6cqw"></div>
   <div class="row" style="justify-content:center;gap:1cqw;flex-wrap:wrap"><span class="chip c"><svg class="i"><use href="#i-warn"/></svg> a step fails → the Auditor still explains it</span><span class="chip b"><svg class="i"><use href="#i-loop"/></svg> resume from any step</span><span class="chip a"><svg class="i"><use href="#i-doc"/></svg> config frozen per run</span></div>
 </section>
 
 <!-- PROTOTYPE: TRUST BY DESIGN -->
-<section class="slide" data-toc="Prototype: trust by design" data-icon="shield">
-  <div><span class="stage-tag">Prototype</span><h1>Trust by design</h1><div class="sub">Code computes every number. The LLM only explains, and is checked</div></div>
+<section class="slide" data-sub="1">
+  <div><span class="stage-tag">5 · Prototype</span><h1>Trust by design</h1><div class="sub">Code computes every number. The LLM only explains, and is checked</div></div>
   <div class="row g1" style="align-items:center;gap:.8cqw">
     <div class="node" style="box-shadow:.2cqw .3cqw 0 var(--blue)"><b class="ib" style="background:var(--blue)"><svg class="i"><use href="#i-code"/></svg></b>Code computes<div class="s">KPIs, drivers, anomalies</div></div><span class="arrow">→</span>
     <div class="node"><b class="ib"><svg class="i"><use href="#i-doc"/></svg></b>Fact sheet<div class="s">only the numbers</div></div><span class="arrow">→</span>
@@ -252,14 +252,14 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- TECH -->
-<section class="slide" data-toc="Technology stack" data-icon="gear">
-  <div><span class="stage-tag">Prototype</span><h1>Technology stack</h1><div class="sub">Free, open source and market standard, one tool per job</div></div>
+<section class="slide" data-sub="1">
+  <div><span class="stage-tag">5 · Prototype</span><h1>Technology stack</h1><div class="sub">Free, open source and market standard, one tool per job</div></div>
   <div class="grid g1" id="tech" style="grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr)"></div>
 </section>
 
 <!-- DATA -->
-<section class="slide" data-toc="The data" data-icon="db">
-  <div><span class="stage-tag">Prototype</span><h1>The data</h1><div class="sub">A real, messy e-commerce dataset, and a second sector to prove we scale</div></div>
+<section class="slide" data-sub="1">
+  <div><span class="stage-tag">5 · Prototype</span><h1>The data</h1><div class="sub">A real, messy e-commerce dataset, and a second sector to prove we scale</div></div>
   <div class="row g1" style="gap:2.4cqw;align-items:stretch">
     <div class="card col g1" style="flex:1.6;gap:1.6cqh;justify-content:space-between">
       <div class="row" style="align-items:center;gap:1cqw"><b class="ib sm" style="background:var(--amber)"><svg class="i"><use href="#i-cart"/></svg></b><span class="h">Olist, Brazilian e-commerce</span></div>
@@ -285,8 +285,8 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- DASHBOARD -->
-<section class="slide" data-toc="The dashboard" data-icon="monitor">
-  <div><span class="stage-tag">Prototype</span><h1>What the user sees</h1><div class="sub">Six tabs, generated from config: a new dataset gets its dashboard with no code</div></div>
+<section class="slide" data-sub="1">
+  <div><span class="stage-tag">5 · Prototype</span><h1>What the user sees</h1><div class="sub">Six tabs, generated from config: a new dataset gets its dashboard with no code</div></div>
   <div class="row g1" style="gap:2.4cqw;align-items:stretch">
     <div class="card notape col flat" style="flex:1.5;gap:1.2cqh;padding:1.4cqh 1.4cqw">
       <div class="row" style="gap:.5cqw;border-bottom:1.5px dashed var(--line);padding-bottom:.8cqh;flex-wrap:wrap"><span class="chip t" style="font-size:1.1cqw">Overview</span><span class="chip" style="font-size:1.1cqw">KPI explorer</span><span class="chip" style="font-size:1.1cqw">Insights</span><span class="chip" style="font-size:1.1cqw">Data quality</span><span class="chip" style="font-size:1.1cqw">Lineage</span><span class="chip" style="font-size:1.1cqw">Explain</span></div>
@@ -313,8 +313,8 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- TEST: FULL RUN -->
-<section class="slide" data-toc="Test: the full run" data-icon="clock">
-  <div><span class="stage-tag">Test</span><h1>Full Olist run, end to end</h1><div class="sub">100k orders, every module real, one command</div></div>
+<section class="slide" data-toc="Test: results on real data" data-icon="check">
+  <div><span class="stage-tag">6 · Test</span><h1>Full Olist run, end to end</h1><div class="sub">100k orders, every module real, one command</div></div>
   <div class="row g1" style="gap:2.4cqw;align-items:stretch">
     <div class="col" style="flex:1;gap:1.6cqh">
       <div class="card col ctr"><div class="big num" style="color:var(--tealD);font-size:5.4cqw">4 min</div><div class="s">raw files → dashboard (target: under 10)</div></div>
@@ -330,15 +330,15 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- TEST: OBJECTIVES MET -->
-<section class="slide" data-toc="Test: objectives measured" data-icon="target">
-  <div><span class="stage-tag">Test</span><h1>Did we reach the objectives?</h1><div class="sub">Each module measures itself (one command: eval --all)</div></div>
+<section class="slide" data-sub="1">
+  <div><span class="stage-tag">6 · Test</span><h1>Did we reach the objectives?</h1><div class="sub">Each module measures itself (one command: eval --all)</div></div>
   <div class="grid g1" id="kpis" style="grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:1.8cqw"></div>
   <div class="row" style="justify-content:center;gap:1cqw;flex-wrap:wrap"><span class="chip t"><svg class="i"><use href="#i-check"/></svg> 149 automated tests passing</span><span class="chip b"><svg class="i"><use href="#i-loop"/></svg> identical results on every rerun</span></div>
 </section>
 
 <!-- TEST: WHAT IT FOUND -->
-<section class="slide" data-toc="Test: what the pipeline found" data-icon="eye">
-  <div><span class="stage-tag">Test</span><h1>What the pipeline found on its own</h1><div class="sub">Real Olist patterns, found without being told</div></div>
+<section class="slide" data-sub="1">
+  <div><span class="stage-tag">6 · Test</span><h1>What the pipeline found on its own</h1><div class="sub">Real Olist patterns, found without being told</div></div>
   <div class="row g1" style="gap:2.2cqw;align-items:stretch">
     <div class="card col g1" style="gap:1.2cqh">
       <div class="row" style="align-items:center;gap:.8cqw"><b class="ib sm" style="background:var(--coral)"><svg class="i"><use href="#i-sparkle"/></svg></b><span class="h" style="font-size:2.2cqw">Black Friday spike</span></div>
@@ -372,8 +372,8 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- TEST: SCALE -->
-<section class="slide" data-toc="Test: a second sector" data-icon="globe">
-  <div><span class="stage-tag">Test</span><h1>Same pipeline, new sector</h1><div class="sub">Bike sharing onboarded with four config files and zero code</div></div>
+<section class="slide" data-sub="1">
+  <div><span class="stage-tag">6 · Test</span><h1>Same pipeline, new sector</h1><div class="sub">Bike sharing onboarded with four config files and zero code</div></div>
   <div class="row g1" style="align-items:center;gap:1.2cqw">
     <div class="col" style="flex:1;gap:1.4cqh">
       <span class="chip" style="font-size:1.5cqw"><svg class="i"><use href="#i-doc"/></svg> dataset config</span>
@@ -395,8 +395,8 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 </section>
 
 <!-- ITERATE -->
-<section class="slide" data-toc="Iterate: what we learned, what is next" data-icon="loop">
-  <div><span class="stage-tag">Iterate</span><h1>What testing taught us</h1><div class="sub">Running the real pipeline exposed problems that unit tests did not</div></div>
+<section class="slide" data-toc="Iterate: lessons and next steps" data-icon="loop">
+  <div><span class="stage-tag">7 · Iterate</span><h1>What testing taught us</h1><div class="sub">Running the real pipeline exposed problems that unit tests did not</div></div>
   <div class="row g1" style="gap:2.4cqw;align-items:stretch">
     <div class="card col g1" style="gap:1.4cqh;justify-content:space-around">
       <div class="h" style="font-size:3cqw">Fixed during integration</div>
@@ -482,7 +482,10 @@ $("stage").addEventListener("touchend",e=>{if(x0===null)return;const dx=e.change
 
 // Table of contents from the sections that carry data-toc
 const toc=S.map((s,k)=>[s,k]).filter(([s])=>s.dataset.toc);
-$("toc").innerHTML=toc.map(([s,k],n)=>`<div class="card row" data-k="${k}" tabindex="0" role="button" style="align-items:center;gap:1cqw;cursor:pointer;padding:.8cqh 1cqw"><b class="big num" style="color:var(--tealD);font-size:3cqw;width:3cqw">${n+1}</b><span class="h g1" style="font-size:1.8cqw">${s.dataset.toc}</span><b class="ib xs">${I(s.dataset.icon)}</b></div>`).join("");
+// number of slides in a section = from its first slide to the next section start (the closing slide excluded)
+const starts=toc.map(([,k])=>k);
+const sectionSize=k=>{const j=starts.indexOf(k);return (j+1<starts.length?starts[j+1]:S.length-1)-k};
+$("toc").innerHTML=toc.map(([s,k],n)=>`<div class="card row" data-k="${k}" tabindex="0" role="button" style="align-items:center;gap:1.4cqw;cursor:pointer;padding:1cqh 1.6cqw"><b class="big num" style="color:var(--tealD);font-size:4.4cqw;width:3.6cqw">${n+1}</b><span class="col g1" style="gap:0"><span class="h" style="font-size:2.7cqw">${s.dataset.toc.split(": ")[0]}</span><span class="s" style="font-size:1.4cqw">${s.dataset.toc.split(": ")[1]||""}</span></span><span class="s" style="font-size:1.2cqw;white-space:nowrap">${sectionSize(k)} slide${sectionSize(k)>1?"s":""}</span><b class="ib sm">${I(s.dataset.icon)}</b></div>`).join("");
 $("toc").onclick=e=>{const c=e.target.closest("[data-k]");if(c)go(+c.dataset.k)};
 $("toc").onkeydown=e=>{if(e.key=="Enter"){const c=e.target.closest("[data-k]");if(c)go(+c.dataset.k)}};
 go((+location.hash.slice(1)||1)-1);
