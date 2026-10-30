@@ -17,6 +17,8 @@ html,body{height:100%;background:var(--black);overflow:hidden;font-family:var(--
 .slide.on{display:flex}
 h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradient(transparent 62%,var(--amber) 62% 92%,transparent 92%);padding:0 .6cqw;text-wrap:balance}
 .sub{color:var(--mute);font-size:1.5cqw;margin-top:.5cqh;padding-left:.6cqw}
+.sec-h1{font-size:3.8cqw}.sec-h1 .desc{font:700 2.6cqw var(--display);color:var(--mute);background:none}
+.subt{display:flex;align-items:baseline;gap:1cqw;padding-left:.6cqw;margin-top:.8cqh}.subt b{font:700 2.5cqw var(--display);color:var(--tealD)}.subt span{font-size:1.45cqw;color:var(--mute)}
 .stage-tag{float:right;font:700 2cqw var(--display);color:var(--tealD);border:2px solid var(--tealD);border-radius:1cqw .4cqw 1cqw .4cqw;padding:.2cqh 1cqw;transform:rotate(2deg);background:var(--card)}
 .row{display:flex;gap:1.4cqw}.col{display:flex;flex-direction:column;gap:1.2cqh}.g1{flex:1;min-width:0}
 .card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:.4cqw;padding:1.5cqw 1.3cqw 1.3cqw;box-shadow:.15cqw .35cqw .8cqw rgba(90,70,30,.16),0 0 0 .1cqw rgba(255,255,255,.6) inset;transform:rotate(-.35deg)}
@@ -132,13 +134,13 @@ h1{font:700 4.6cqw/1 var(--display);display:inline-block;background:linear-gradi
 
 <!-- TOC -->
 <section class="slide">
-  <div><h1>Table of contents</h1><div class="sub">Click a section to jump to it</div></div>
+  <div><h1>Outline</h1><div class="sub">Click a section to jump to it</div></div>
   <div class="grid g1" id="toc" style="grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(4,1fr);gap:1.8cqw 3cqw"></div>
 </section>
 
 <!-- JOURNEY -->
 <section class="slide" data-toc="Overview: our Design Thinking journey" data-icon="compass">
-  <div><span class="stage-tag">1 · Overview</span><h1>Our Design Thinking journey</h1><div class="sub">Five stages, from people's pain to a tested product</div></div>
+  <div><span class="stage-tag">1 · Overview</span><h1>Five stages, one loop</h1><div class="sub">From people's pain to a tested product</div></div>
   <div class="row g1" style="align-items:center;padding:0 1cqw"><div class="row g1" style="align-items:flex-start">
     <div class="stp"><div class="d" style="background:var(--blue)"><svg class="i"><use href="#i-users"/></svg></div><span class="h" style="font-size:3cqw">Empathize</span><span class="chip">3 personas</span></div><span class="ln"></span>
     <div class="stp"><div class="d" style="background:var(--amber)"><svg class="i"><use href="#i-target"/></svg></div><span class="h" style="font-size:3cqw">Define</span><span class="chip">1 problem · 6 objectives</span></div><span class="ln"></span>
@@ -468,6 +470,15 @@ $("timebars").innerHTML=tb.map(x=>`<div class="row" style="align-items:center;ga
 const kp=[["BO1","clock","Same numbers every run","4 min full data","t"],["BO2","search","Lineage coverage","80%","a"],["BO3","sparkle","Silent deletions","0","c"],
 ["BO4","shield","Schema errors caught","100%","b"],["BO5","globe","Right KPI in top 3","91%","k"],["BO6","target","Planted anomalies found","100%","t"]];
 $("kpis").innerHTML=kp.map(x=>`<div class="card col ctr" style="justify-content:center;gap:.6cqh"><div class="row" style="align-items:center;gap:.8cqw"><b class="ib xs" style="background:var(--${col[x[4]]})">${I(x[1])}</b><span class="h" style="font-size:2cqw">${x[0]}</span></div><span class="big num" style="font-size:4.4cqw;color:var(--ink)">${x[3]}</span><span class="s">${x[2]}</span></div>`).join("");
+
+// Section header: every slide of a section shows "N · Section: description" + its own title and subtitle
+(()=>{const all=[...document.querySelectorAll(".slide")];let sec=null,n=0;
+all.forEach((sl,k)=>{if(sl.dataset.toc){n++;const [name,desc]=sl.dataset.toc.split(": ");sec={n,name,desc}}
+  if(!sec||k==all.length-1)return;
+  const head=sl.querySelector(":scope > div");const h=head&&head.querySelector("h1");if(!h)return;
+  const tag=head.querySelector(".stage-tag");if(tag)tag.remove();
+  const sub=head.querySelector(".sub");const title=h.textContent.trim(),subtxt=sub?sub.textContent.trim():"";
+  head.innerHTML=`<h1 class="sec-h1">${sec.n} · ${sec.name}<span class="desc">: ${sec.desc}</span></h1><div class="subt"><b>${title}</b>${subtxt?`<span>${subtxt}</span>`:""}</div>`;});})();
 
 // Paging
 const S=[...document.querySelectorAll(".slide")];let i=0;$("tot").textContent=S.length;
