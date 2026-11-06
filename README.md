@@ -1,138 +1,153 @@
 # BIFlow
 
-Multi-agent BI pipeline: **automated, transparent, traceable.** Raw CSV files go in; a dashboard comes out with KPIs,
-the reasons behind each change, insights, recommendations and a full audit trail of every transformation.
-Code computes every number. An LLM (optional) only writes text from those numbers, and every number it writes is
-checked against the facts.
+**From raw CSV files to a business dashboard you can trust, in one command.**
+
+BIFlow is a business-intelligence pipeline built from small, independent services. You give it raw data
+(for example an e-commerce export), and it ingests it, checks its quality, cleans it, models it, computes KPIs,
+looks for trends and anomalies, and gives you a dashboard that explains what changed and why.
+
+The main idea: **code computes every number.** A language model is optional. When it is turned on, it only writes
+the text around the numbers, and every number it writes is checked against the real results before it is shown.
+Every step is also logged, so you can trace any KPI back to the raw rows it came from.
 
 ---
 
-## Try it in 5 minutes
+## Quick start
 
-**You need:** [Docker Desktop](https://www.docker.com/products/docker-desktop/) (running) and [Git](https://git-scm.com/downloads).
-Nothing else: no Python, no database, no data download. The demo data is in the repository.
+You need **[Docker Desktop](https://www.docker.com/products/docker-desktop/)** (running) and **[Git](https://git-scm.com/downloads)**.
+You don't need Python, a database or any data download: demo data is included.
 
 ```bash
-git clone https://github.com/eyahamdidev/BI_Flow.git
-cd BI_Flow
-git checkout bo1/foundation        # the integrated branch (until it is merged into main)
+git clone https://github.com/khairovic/BI-Flow.git
+cd BI-Flow
 ```
 
-Then start everything with **one command**:
+Start everything:
 
 | Windows (PowerShell) | macOS / Linux |
 |---|---|
 | `powershell -ExecutionPolicy Bypass -File start.ps1` | `./start.sh` |
 
-The script:
-1. checks that Docker is running,
-2. creates your `.env` and asks for an **optional** LLM API key (press Enter to skip),
-3. builds and starts the 8 services (**first time: 5-15 minutes**, mostly downloads; afterwards seconds),
-4. runs the full pipeline on the demo data (1% of the Olist e-commerce dataset, about 1-2 minutes),
-5. opens the dashboard at **http://localhost:8501**. Pick the run in the left sidebar.
+The script checks Docker, creates your `.env` file, builds the services, runs the pipeline on a small sample of the
+[Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) e-commerce dataset, and opens the dashboard at
+**http://localhost:8501**.
 
-**Without an API key** everything still works: the LLM steps use their built-in templates instead.
-**With a key** the summaries, narratives and explanations are written by the LLM. A free key:
-[Groq](https://console.groq.com/keys) (or any OpenAI-compatible provider: set `LLM_BASE_URL` and `LLM_API_KEY` in `.env`).
+- The first start takes **5–15 minutes** (mostly downloading Docker images). After that it starts in seconds.
+- The script asks for an **optional** LLM API key. Press Enter to skip: everything still works, using built-in text
+  templates. With a key (a free [Groq](https://console.groq.com/keys) key works, or any OpenAI-compatible provider),
+  the summaries and explanations are written by the model.
 
-### More datasets
+### Other options
 
-| command (Windows: `.\start.ps1 ...`, macOS/Linux: `./start.sh ...`) | what runs |
+| Command (Windows: `.\start.ps1 ...` · macOS/Linux: `./start.sh ...`) | What it does |
 |---|---|
-| `start.ps1 -Dataset bike_share` / `./start.sh bike_share` | a second sector (urban bike sharing), onboarded with config files only |
-| `start.ps1 -Full` / `./start.sh --full` | the **full** Olist dataset (100k orders): downloads it from Kaggle (~45 MB), ~4 minutes |
-| `start.ps1 -Stop` / `./start.sh --stop` | stop everything |
+| `-Dataset bike_share` / `bike_share` | Runs a second, unrelated sector (city bike sharing), set up only with config files |
+| `-Full` / `--full` | Downloads and runs the **full** Olist dataset (100k orders, about 4 minutes) |
+| `-Stop` / `--stop` | Stops everything |
 
-If the Kaggle download is blocked on your network, download
-[olistbr/brazilian-ecommerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) by hand, unzip the 9 CSV
-files into `data/raw/olist/`, and run `start.ps1 -Dataset olist` / `./start.sh olist`.
-
-### Test with your own data (same structure as Olist)
-
-In the dashboard sidebar, **Add a dataset**: choose the dataset it looks like (`olist`), give it a name, upload the CSV
-files (same file names and columns; the sidebar lists them), then **Start a new run** with the new dataset selected.
-The files are checked first (all files present, all columns present) and stored locally in `data/uploads/<name>/`.
-A 5-row test set is ready in [`tests/fixtures/upload_demo/`](tests/fixtures/upload_demo/).
-
-### What to look at in the dashboard
-
-| tab | what it shows |
-|---|---|
-| Overview | run summary, one tile per KPI (latest complete month), pipeline stages |
-| KPI explorer | trends, breakdowns, and **"why did it move?"**: the change split by segment (parts sum to the total) |
-| Insights and actions | trends, anomalies (e.g. the Black Friday spike), recommendations from the rule table |
-| Data quality | quality score before / after cleaning, profile diff |
-| Lineage | graph from raw tables to KPIs, and the Auditor's trace report |
-| Explain | ask in your own words ("why did sales drop?"): a fact-checked explanation with citations |
-
-### Troubleshooting
-
-- **Build fails with a network error**: run the start script again (downloads resume from the cache).
-- **"Docker is not running"**: start Docker Desktop and wait until it says "running".
-- **A port is already used** (8000, 8101-8106, 8501): stop the other program, or `start.ps1 -Stop` an older BIFlow.
-- **Containers cannot reach the internet** (LLM calls fail although the key is right): if `docker info` shows an
-  HTTP proxy, uncomment the two proxy lines in `.env` and run the start script again.
-- Logs of one service: `docker compose logs -f gateway` (or etl, auditor, profile_clean, ingest_quality, semantic_kpi, analyst, dashboard).
+If the Kaggle download is blocked on your network, download the dataset by hand, unzip the 9 CSV files into
+`data/raw/olist/`, and run `start.ps1 -Dataset olist` / `./start.sh olist`.
 
 ---
 
-## Command line (optional)
+## What you get in the dashboard
 
-All commands run inside the gateway container: `docker compose exec gateway python -m app.cli <command>`
-
-| command | what it does |
+| Tab | What you see |
 |---|---|
-| `run --dataset olist_sample` | run the pipeline (datasets: `olist_sample`, `bike_share`, `olist`) |
-| `run --resume RUN_ID [--from STAGE]` | continue a run, or redo one stage and everything after it |
-| `list` / `status RUN_ID` / `graph` | runs, one run's manifest, the pipeline graph (Mermaid) |
-| `bench --dataset olist_sample --runs 5` | time-to-insight benchmark (p50/p95, cold vs cached LLM, resume, reproducibility) |
-| `eval --all` | every module's self-evaluation in one results table |
+| **Overview** | A summary of the run, one tile per KPI, and the status of every pipeline step |
+| **KPI explorer** | Trends and breakdowns, plus **"why did it move?"**: a change split by segment |
+| **Insights and actions** | Trends, anomalies (such as the Black Friday spike) and recommendations |
+| **Data quality** | A 0–100 quality score before and after cleaning, and what changed |
+| **Lineage** | A graph from the raw tables to each KPI, plus an audit report |
+| **Explain** | Ask a question in plain words ("why did sales drop?") and get a fact-checked answer with sources |
+
+You can also upload your own files from the sidebar, as long as they have the same structure as an existing dataset.
+A tiny test set is in [`tests/fixtures/upload_demo/`](tests/fixtures/upload_demo/).
+
+---
 
 ## How it works
 
-```
-ingest → validate_raw → profile → score_before → clean → profile_after → validate → score_after
-      → etl (dbt on DuckDB) → kpi_compute → kpi_index → analyse → dashboard_config → lineage_graph → audit → summary
-```
-
-The gateway (LangGraph) is the only component that calls the modules. If a stage fails, the run jumps to the Auditor
-so the failure is still explained. Each run freezes its exact config (`data/runs/<id>/dataset.yaml`), every stage
-writes lineage events, and the run manifest labels each stage real / mock / seeded.
-
-| BO | Module | Port | What it does |
-|---|---|---|---|
-| BO1 Time-to-insight | `gateway` + `etl` | 8000 / 8101 | orchestration, resume, run summary; dbt staging generated from YAML + domain marts, tests, reconciliation |
-| BO2 Trust (XAI) | `auditor` | 8102 | lineage graph, trace report, "Explain this KPI" with citations, fact-check |
-| BO3 Cut manual cleaning | `profile_clean` | 8103 | profiling, rule + ML + advisory-LLM cleaning, before/after profile, review queue |
-| BO4 Reliability | `ingest_quality` | 8104 | CSV / SQL / API ingest, schema contracts, 0-100 quality score before/after |
-| BO5 Scale across sectors | `semantic_kpi` | 8105 | KPIs from a catalog (+ breakdowns), KPI search, question → KPI, KPI drafts for new datasets |
-| BO6 Decide faster | `analyst` + `dashboard` | 8106 / 8501 | trends, anomalies, driver decomposition, rule-based recommendations, narratives; Streamlit app |
-
-**A new dataset is config only:** `configs/datasets/<name>.yaml`, `configs/marts/<domain>/`, `configs/kpis/<domain>.yaml`,
-`configs/recommendations/<domain>.yaml`. See `bike_share` for a complete example.
-
-Results and evidence: [`docs/results/`](docs/results/) (benchmark, evaluations) · design: [`docs/BIFlow_Technical_Spec.md`](docs/BIFlow_Technical_Spec.md) ·
-rules: [`docs/RULES.md`](docs/RULES.md) · integration log: [`docs/INTEGRATION_NOTES.md`](docs/INTEGRATION_NOTES.md) ·
-manual baseline protocol: [`docs/manual_baseline.md`](docs/manual_baseline.md) ·
-future work: [`docs/FUTURE_WORK.md`](docs/FUTURE_WORK.md)
-
-## For developers
-
-- `docker-compose.override.yml` (loaded automatically) mounts each service's code: after a code change,
-  `docker compose restart <service>` is enough. Rebuild only when a `requirements.lock` changes
-  (`python scripts/lock_all.py <service>`, needs `pip install uv`).
-- Tests of one service: `docker compose run --rm --no-deps -e BIFLOW_MOCK=1 -e FAKE_LLM=1 <service> sh -c "pip install -q pytest && python -m pytest -q"`
-  (from the service folder; see each `services/<module>/README.md`).
-- Containers run Python 3.11: check syntax with Python 3.11 before committing.
+Each run goes through these steps:
 
 ```
-contracts/            shared request/response models, service kit, LLM helper
-config/models.yaml    LLM model names per profile (api | ollama | low_ram)
-configs/              datasets/, marts/<domain>/, kpis/<domain>.yaml, recommendations/<domain>.yaml
-services/<module>/    app/ · mock/ · eval/ · tests/ · Dockerfile · requirements.in / .lock
-prompts/<module>/     versioned prompts (prompt library)
-data/demo/            committed demo data (bike sharing); data/raw/ and data/runs/ are local only
-tests/fixtures/       1% Olist sample (demo + tests), LLM fixtures
-scripts/              start helpers, lock_all.py, make_sample.py, get_olist.py
-docs/                 spec, rules, integration notes, results
+ingest → check raw data → profile → score → clean → profile again → validate → score again
+       → model (dbt on DuckDB) → compute KPIs → analyse → build dashboard → lineage → audit → summary
 ```
+
+A **gateway** service (built with LangGraph) runs the steps in order and is the only service that calls the others.
+If a step fails, the run still goes to the audit step, so the failure gets explained. Each run saves the exact
+config it used, and you can resume a run or redo it from any step.
+
+| Service | Port | Role |
+|---|---|---|
+| `gateway` | 8000 | Runs the pipeline, handles resume, writes the run summary |
+| `etl` | 8101 | Builds the data models with dbt on DuckDB, with tests and reconciliation |
+| `auditor` | 8102 | Lineage graph, audit report, "explain this KPI" with sources, fact-checking |
+| `profile_clean` | 8103 | Profiles the data and cleans it (rules, ML, optional LLM advice), with a review queue |
+| `ingest_quality` | 8104 | Reads CSV / SQL / API sources, checks schemas, computes the quality score |
+| `semantic_kpi` | 8105 | KPI catalog, KPI search, turns a question into the right KPI |
+| `analyst` | 8106 | Trends, anomalies, driver breakdowns, recommendations, written summaries |
+| `dashboard` | 8501 | The Streamlit web app |
+
+**Adding a new dataset doesn't need any code**, only config files: `configs/datasets/<name>.yaml`,
+`configs/marts/<domain>/`, `configs/kpis/<domain>.yaml` and `configs/recommendations/<domain>.yaml`.
+The `bike_share` dataset is a complete example.
+
+**Tech stack:** Python 3.11, FastAPI, LangGraph, dbt + DuckDB, pandas, pandera, scikit-learn, statsmodels,
+ChromaDB, Plotly, Streamlit, Docker Compose.
+
+---
+
+## Command line
+
+Everything in the dashboard can also be run from the terminal:
+
+```bash
+docker compose exec gateway python -m app.cli <command>
+```
+
+| Command | What it does |
+|---|---|
+| `run --dataset olist_sample` | Runs the pipeline (`olist_sample`, `bike_share` or `olist`) |
+| `run --resume RUN_ID --from STAGE` | Continues a run, or redoes one step and everything after it |
+| `list` · `status RUN_ID` · `graph` | Lists runs, shows one run, prints the pipeline graph |
+| `bench --dataset olist_sample --runs 5` | Measures time-to-insight |
+| `eval --all` | Runs every service's self-evaluation |
+
+---
+
+## Project structure
+
+```
+services/<name>/   one folder per service: app/, tests/, eval/, mock/, Dockerfile
+contracts/         shared request/response models used by all services
+configs/           dataset, model, KPI and recommendation configs
+config/models.yaml LLM model names (API, Ollama, low-RAM)
+prompts/           versioned prompts
+data/demo/         demo data included in the repo
+tests/fixtures/    1% Olist sample used for the demo and the tests
+scripts/           start helpers and dev tools
+docs/              technical spec, results, future work
+```
+
+## Development
+
+- Code is mounted into the containers, so after a change `docker compose restart <service>` is enough.
+- Run one service's tests:
+  `docker compose run --rm --no-deps -e BIFLOW_MOCK=1 -e FAKE_LLM=1 <service> sh -c "pip install -q pytest && python -m pytest -q"`
+- Logs of one service: `docker compose logs -f <service>`
+
+## Troubleshooting
+
+- **The build fails with a network error:** run the start script again. Downloads resume from the cache.
+- **"Docker is not running":** open Docker Desktop and wait until it says it is running.
+- **A port is already in use** (8000, 8101–8106, 8501): stop the program using it, or stop an older BIFlow with `-Stop`.
+- **LLM calls fail even though the key is right:** if `docker info` shows an HTTP proxy, uncomment the two proxy
+  lines in `.env` and start again.
+
+## Documentation
+
+- [Technical spec](docs/BIFlow_Technical_Spec.md)
+- [Benchmarks and evaluations](docs/results/)
+- [Future work](docs/FUTURE_WORK.md)
